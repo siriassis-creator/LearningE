@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+// --- กำหนดประเภทข้อมูล (Types) ---
+type Course = {
+  id: number;
+  title: string;
+  image: string;
+};
+
+type LoginProps = {
+  onLogin: () => void;
+};
+
+type CourseCatalogProps = {
+  onViewCourse: (course: Course) => void;
+};
+
+type CourseDetailProps = {
+  course: Course | null;
+  onBack: () => void;
+};
 
 // --- [1] หน้า Login ---
-const LoginView = ({ onLogin }) => (
+const LoginView = ({ onLogin }: LoginProps) => (
   <div className="min-h-screen flex items-center justify-center bg-slate-50">
     <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-slate-200">
       <div className="text-center mb-8">
@@ -19,9 +39,9 @@ const LoginView = ({ onLogin }) => (
   </div>
 );
 
-// --- [2] หน้าแรก: คลังหลักสูตร (Course Catalog) พร้อมแบนเนอร์ ---
-const CourseCatalogView = ({ onViewCourse }) => {
-  const courses = [
+// --- [2] หน้าแรก: คลังหลักสูตร ---
+const CourseCatalogView = ({ onViewCourse }: CourseCatalogProps) => {
+  const courses: Course[] = [
     { id: 1, title: 'ระเบียบงานสารบรรณ พ.ศ. 2566', image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=400&h=250' },
     { id: 2, title: 'ความปลอดภัยทางไซเบอร์เบื้องต้น', image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=400&h=250' },
     { id: 3, title: 'การใช้งานสื่อดิจิทัลเพื่อการศึกษา', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=400&h=250' },
@@ -31,8 +51,7 @@ const CourseCatalogView = ({ onViewCourse }) => {
 
   return (
     <div className="space-y-8">
-      
-      {/* ส่วน Banner บทนำ (Hero Section) */}
+      {/* ส่วน Banner บทนำ */}
       <div className="bg-white p-8 rounded-xl shadow-sm border border-blue-100 border-l-4 border-l-blue-900 relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-2xl font-bold text-blue-900 mb-4 flex items-center gap-3">
@@ -40,7 +59,7 @@ const CourseCatalogView = ({ onViewCourse }) => {
           </h2>
           <p className="text-slate-600 leading-relaxed text-justify md:pr-12">
             การเรียนรู้ผ่านสื่ออิเล็กทรอนิกส์ (E-Learning) ของสำนักงานเขตพื้นที่การศึกษาประถมศึกษาราชบุรี เขต 1 จัดทำขึ้นเพื่อเป็นสื่อกลางในการเรียนรู้ทางออนไลน์ สำหรับผู้บริหารโรงเรียน ครู บุคลากรทางการศึกษา และประชาชนทั่วไป เพื่อพัฒนาความรู้ ความสามารถ และความสนใจ และเป็นการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์ ให้มีความพร้อมสำหรับวิถีชีวิตในศตวรรษที่ 21 
-            <br/>
+            <br/><br/>
             โดยเนื้อหาประกอบด้วยข้อความ รูปภาพ วีดีโอ และสื่ออื่น ๆ โดยอาศัยเครื่องมือติดต่อสื่อสารที่ทันสมัย เช่น E-Mail เป็นการเรียนรู้สำหรับทุกคน เรียนรู้ได้ทุกที่ ทุกเวลา ทุกสถานที่ โดยผู้ผ่านการทดสอบประเมินความรู้ ความเข้าใจ แต่ละหลักสูตรจะได้รับวุฒิบัตรส่งกลับทางอีเมล์
           </p>
         </div>
@@ -52,7 +71,6 @@ const CourseCatalogView = ({ onViewCourse }) => {
         <h2 className="text-xl font-bold text-slate-800 border-b border-slate-200 pb-4 mb-6 flex items-center gap-2">
           <span>📚</span> หลักสูตรทั้งหมด
         </h2>
-        {/* ปรับให้ขยายเป็น 4 หรือ 5 คอลัมน์ได้เมื่อหน้าจอใหญ่ขึ้น */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {courses.map(course => (
             <div 
@@ -71,14 +89,15 @@ const CourseCatalogView = ({ onViewCourse }) => {
           ))}
         </div>
       </div>
-
     </div>
   );
 };
 
-// --- [3] หน้ารายละเอียดหลักสูตร (แบ่ง 4 ส่วน) ---
-const CourseDetailView = ({ course, onBack }) => {
-  const [activeTab, setActiveTab] = useState('content'); 
+// --- [3] หน้ารายละเอียดหลักสูตร ---
+const CourseDetailView = ({ course, onBack }: CourseDetailProps) => {
+  const [activeTab, setActiveTab] = useState<string>('content'); 
+
+  if (!course) return null; // ป้องกัน Error กรณี course เป็น null
 
   return (
     <div className="space-y-6 animate-fade-in w-full">
@@ -195,18 +214,18 @@ const ExamBuilderView = () => (
 
 // --- [6] โครงสร้างหลัก (Layout) ---
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentMenu, setCurrentMenu] = useState('home'); 
-  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [currentMenu, setCurrentMenu] = useState<string>('home'); 
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+
+  const navigateToCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setCurrentMenu('course-detail');
+  };
 
   if (!isLoggedIn) {
     return <LoginView onLogin={() => setIsLoggedIn(true)} />;
   }
-
-  const navigateToCourse = (course) => {
-    setSelectedCourse(course);
-    setCurrentMenu('course-detail');
-  };
 
   const renderContent = () => {
     switch (currentMenu) {
@@ -220,7 +239,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
-      {/* Sidebar - Fix width */}
       <div className="w-64 shrink-0 bg-blue-900 text-white flex flex-col shadow-xl z-10 hidden md:flex h-screen sticky top-0">
         <div className="p-6 border-b border-blue-800 shrink-0">
           <h1 className="text-xl font-bold tracking-wide">E-Learning</h1>
@@ -256,9 +274,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Content Area - Full Width */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        {/* Header */}
         <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4 flex justify-between items-center z-0 shrink-0">
           <h2 className="text-slate-600 font-medium flex items-center gap-2 truncate"><span>🌐</span> ระบบบริหารจัดการการเรียนรู้ (LMS)</h2>
           <div className="flex items-center gap-3 shrink-0">
@@ -270,7 +286,6 @@ export default function App() {
           </div>
         </header>
         
-        {/* Content Wrapper - ปลดล็อกความกว้าง (Removed max-w-6xl mx-auto) ให้เต็มพื้นที่ */}
         <main className="p-4 md:p-8 w-full flex-1 overflow-y-auto bg-slate-50">
           {renderContent()}
         </main>
