@@ -157,21 +157,18 @@ const CourseDetailView = ({ course, settings, onBack }: { course: Course, settin
   };
 
   return (
-    <div className="space-y-4 animate-fade-in w-full relative">
+    <div className="space-y-6 animate-fade-in w-full relative">
       <button onClick={onBack} className="text-blue-600 hover:text-blue-900 flex items-center gap-2 font-bold bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg inline-flex transition"><span>⬅️</span> กลับไปหน้าหลักสูตร</button>
       
       {showCertificate && <CertificateModal course={course} settings={settings} onClose={() => setShowCertificate(false)} />}
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full flex flex-col">
-        
-        {/* 🔴 ปรับลดความสูง (จาก h-64 เป็น h-32/h-40) และปรับขนาดฟอนต์ให้เล็กลง */}
         <div className="h-32 lg:h-40 bg-blue-900 text-white p-6 lg:p-8 flex flex-col justify-end relative overflow-hidden shrink-0">
            <img src={course.image} className="absolute inset-0 w-full h-full object-cover opacity-20" alt="bg" />
            <div className="absolute inset-0 bg-gradient-to-t from-blue-900 to-transparent opacity-80"></div>
            <h2 className="text-2xl lg:text-3xl font-bold relative z-10 leading-tight">{course.title}</h2>
         </div>
 
-        {/* 🔴 ปรับความสูงของแถบเมนู (Tabs) ให้บางลง */}
         <div className="flex border-b border-slate-200 bg-slate-50 overflow-x-auto scrollbar-hide shrink-0">
           {[{ id: 'content', label: '1. เนื้อหาบทเรียน', icon: '📚' }, { id: 'instructor', label: '2. ผู้พัฒนาหลักสูตร', icon: '👨‍🏫' }, { id: 'exam', label: '3. แบบทดสอบ', icon: '📝' }, { id: 'passed', label: '4. ผู้ผ่านการอบรม', icon: '🏆' }].map(tab => (
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setExamState('intro'); }} className={`flex-1 py-3 px-5 text-sm lg:text-base font-bold flex items-center justify-center gap-2 transition whitespace-nowrap ${activeTab === tab.id ? 'border-b-4 border-blue-900 text-blue-900 bg-white' : 'text-slate-500 hover:bg-slate-100'}`}><span>{tab.icon}</span> {tab.label}</button>
@@ -238,7 +235,7 @@ const CourseDetailView = ({ course, settings, onBack }: { course: Course, settin
                     <div className="text-center py-12 bg-slate-50 rounded-xl border border-slate-200 shadow-sm"><div className="text-6xl mb-4">📝</div><h3 className="text-2xl font-bold text-slate-800 mb-2">แบบประเมินผลความรู้</h3><p className="text-slate-600 mb-6">ข้อสอบปรนัยจำนวน {course.exam.length} ข้อ <br/><span className="text-blue-600 font-bold">เกณฑ์การผ่าน {course.passingPercentage}%</span> (ต้องถูก {Math.ceil(course.exam.length * (course.passingPercentage/100))} ข้อขึ้นไป)</p><button onClick={handleStartExam} className="bg-blue-900 text-white px-8 py-3 rounded-lg hover:bg-blue-800 transition shadow-md font-bold text-lg inline-flex items-center gap-2">▶️ เริ่มทำแบบทดสอบ</button></div>
                   )}
                   {examState === 'taking' && (
-                    <div className="space-y-6 animate-fade-in"><div className="flex justify-between items-center border-b pb-4"><h3 className="text-xl font-bold text-slate-800">กำลังทำแบบทดสอบ...</h3><span className="bg-blue-100 text-blue-900 px-3 py-1 rounded-full text-sm font-bold">{Object.keys(answers).length} / {course.exam.length} ข้อ</span></div><div className="space-y-6">{course.exam.map((q, idx) => (<div key={q.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm"><p className="font-bold text-slate-800 mb-4 text-lg"><span className="text-blue-600 mr-2">{idx + 1}.</span>{q.text}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3">{q.options.map((opt, oIdx) => (<label key={oIdx} className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition ${answers[q.id] === oIdx ? 'bg-blue-50 border-blue-400 text-blue-900 font-medium shadow-inner' : 'hover:bg-slate-50 border-slate-200'}`}><input type="radio" name={`q-${q.id}`} value={oIdx} checked={answers[q.id] === oIdx} onChange={() => setAnswers({...answers, [q.id]: oIdx})} className="w-5 h-5 text-blue-600 focus:ring-blue-500" /><span>{opt}</span></label>))}</div></div>))}</div><div className="pt-6 flex justify-end"><button onClick={handleSubmitExam} disabled={Object.keys(answers).length < course.exam.length} className={`px-8 py-3 rounded-lg font-bold text-lg transition shadow-md ${Object.keys(answers).length < course.exam.length ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'}`}>ส่งคำตอบ 📤</button></div></div>
+                    <div className="space-y-6 animate-fade-in max-w-4xl mx-auto"><div className="flex justify-between items-center border-b pb-4"><h3 className="text-xl font-bold text-slate-800">กำลังทำแบบทดสอบ...</h3><span className="bg-blue-100 text-blue-900 px-3 py-1 rounded-full text-sm font-bold">{Object.keys(answers).length} / {course.exam.length} ข้อ</span></div><div className="space-y-6">{course.exam.map((q, idx) => (<div key={q.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm"><p className="font-bold text-slate-800 mb-4 text-lg"><span className="text-blue-600 mr-2">{idx + 1}.</span>{q.text}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3">{q.options.map((opt, oIdx) => (<label key={oIdx} className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition ${answers[q.id] === oIdx ? 'bg-blue-50 border-blue-400 text-blue-900 font-medium shadow-inner' : 'hover:bg-slate-50 border-slate-200'}`}><input type="radio" name={`q-${q.id}`} value={oIdx} checked={answers[q.id] === oIdx} onChange={() => setAnswers({...answers, [q.id]: oIdx})} className="w-5 h-5 text-blue-600 focus:ring-blue-500" /><span>{opt}</span></label>))}</div></div>))}</div><div className="pt-6 flex justify-end"><button onClick={handleSubmitExam} disabled={Object.keys(answers).length < course.exam.length} className={`px-8 py-3 rounded-lg font-bold text-lg transition shadow-md ${Object.keys(answers).length < course.exam.length ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'}`}>ส่งคำตอบ 📤</button></div></div>
                   )}
                   {examState === 'result' && (
                     <div className="text-center py-12 bg-slate-50 rounded-xl border border-slate-200 shadow-sm animate-fade-in"><div className="text-6xl mb-4">{score.percentage >= course.passingPercentage ? '🏆' : '😅'}</div><h3 className="text-3xl font-bold text-slate-800 mb-2">ผลการทดสอบ</h3><p className="text-xl text-slate-600 mb-6">คุณทำคะแนนได้ <strong className="text-blue-900 text-2xl">{score.correct} / {score.total}</strong> ข้อ <span className="text-sm">({score.percentage}%)</span></p>
@@ -310,7 +307,6 @@ const AdminManagerView = ({ courses, setCourses }: { courses: Course[], setCours
 
 const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSave: (c: Course) => void, onCancel: () => void }) => {
   const [formData, setFormData] = useState<Course>({ ...course });
-  const [isAiGenerating, setIsAiGenerating] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [importText, setImportText] = useState('');
 
@@ -318,7 +314,11 @@ const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSav
   const handleRemoveContent = (id: number) => setFormData({...formData, contents: formData.contents.filter(c => c.id !== id)});
   const handleAddInstructor = () => setFormData({...formData, instructors: [...formData.instructors, { id: Date.now(), name: '', role: '', description: '', image: '' }]});
   const handleRemoveInstructor = (id: number) => setFormData({...formData, instructors: formData.instructors.filter(i => i.id !== id)});
-  const handleAddQuestionManual = () => setFormData(prev => ({ ...prev, exam: [...prev.exam, { id: Date.now(), text: '', options: ['', '', '', ''], correctAnswer: 0 }] }));
+
+  const handleAddQuestionManual = () => {
+    const newQuestion: Question = { id: Date.now(), text: '', options: ['', '', '', ''], correctAnswer: 0 };
+    setFormData(prev => ({ ...prev, exam: [...prev.exam, newQuestion] }));
+  };
 
   const handleImportText = () => {
     const lines = importText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
@@ -328,17 +328,6 @@ const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSav
     }
     if (newQuestions.length > 0) setFormData(prev => ({ ...prev, exam: [...prev.exam, ...newQuestions] }));
     setImportText(''); setShowImportModal(false);
-  };
-
-  const handleAiGenerate = () => {
-    setIsAiGenerating(true);
-    setTimeout(() => {
-      const aiQuestions: Question[] = [
-        { id: Date.now(), text: 'AI Gen: ข้อใดคือประโยชน์หลักของระบบ E-Learning?', options: ['ประหยัดกระดาษ', 'เรียนได้ทุกที่ทุกเวลา', 'ลดจำนวนครูผู้สอน', 'ไม่ต้องมีการสอบ'], correctAnswer: 1 }
-      ];
-      setFormData(prev => ({ ...prev, exam: [...prev.exam, ...aiQuestions] }));
-      setIsAiGenerating(false);
-    }, 2500);
   };
 
   return (
@@ -424,7 +413,7 @@ const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSav
               <h3 className="text-lg font-bold flex items-center gap-2"><span className="bg-blue-100 text-blue-900 w-8 h-8 rounded-full flex items-center justify-center">4</span> แบบประเมิน (Exam)</h3>
               <div className="mt-2 ml-10 flex items-center gap-2 text-sm text-slate-600 font-bold">เกณฑ์ผ่าน: <input type="number" value={formData.passingPercentage} onChange={e => setFormData({...formData, passingPercentage: Number(e.target.value)})} className="w-16 px-2 py-1 border rounded text-center text-blue-900" min="1" max="100"/> %</div>
             </div>
-            <div className="flex flex-wrap gap-2 w-full xl:w-auto">
+            <div className="flex gap-2 w-full xl:w-auto">
               <button onClick={handleAddQuestionManual} className="flex-1 xl:flex-none px-4 py-2.5 rounded-lg font-bold text-sm bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition shadow-sm">➕ เพิ่มข้อสอบเอง</button>
               <button onClick={() => setShowImportModal(true)} className="flex-1 xl:flex-none px-4 py-2.5 rounded-lg font-bold text-sm bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition shadow-sm">📥 นำเข้าจาก Word/Excel</button>
             </div>
@@ -481,8 +470,9 @@ export default function App() {
            <div className="flex items-center justify-between w-full md:w-auto">
              <div className="flex items-center gap-3">
                <h1 className="text-2xl font-bold tracking-wide">E-Learning</h1>
-               <div className="hidden md:block h-6 w-px bg-blue-700"></div>
-               <p className="text-blue-200 text-sm hidden md:block max-w-[300px] truncate">{settings.orgName}</p>
+               <div className="hidden lg:block h-6 w-px bg-blue-700"></div>
+               {/* 🔴 นำ max-w-[300px] และ truncate ออกแล้ว ให้แสดงเต็มๆ */}
+               <p className="text-blue-200 text-sm hidden lg:block whitespace-nowrap">{settings.orgName}</p>
              </div>
              <button onClick={() => setIsLoggedIn(false)} className="md:hidden text-red-300 hover:text-white transition">🚪 ออกจากระบบ</button>
            </div>
