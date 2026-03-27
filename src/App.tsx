@@ -35,8 +35,11 @@ const initialCourses: Course[] = [
     id: 1, title: 'ระเบียบงานสารบรรณ พ.ศ. 2566', image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=400&h=250', 
     intro: 'หลักสูตรพื้นฐานสำหรับบุคลากรทางการศึกษา เพื่อให้เข้าใจถึงระเบียบข้อบังคับ และการจัดทำหนังสือราชการได้อย่างถูกต้องตามมาตรฐานสากล', 
     isActive: true, passingPercentage: 80,
-    instructors: [{ id: 1, name: 'อ. สมชาย รักเรียน', role: 'ผู้เชี่ยวชาญ สพป.ราชบุรี เขต 1', description: 'รับผิดชอบการออกแบบและพัฒนาเนื้อหาการเรียนรู้ผ่านสื่ออิเล็กทรอนิกส์ (E-Learning) เพื่อสนับสนุนและพัฒนาศักยภาพบุคลากรทางการศึกษา', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200' }],
-    contents: [{ id: 1, title: 'บทนำงานสารบรรณ', type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }],
+    instructors: [{ id: 1, name: 'อ. สมชาย รักเรียน', role: 'ผู้เชี่ยวชาญ สพป.ชัยภูมิ เขต 2', description: 'รับผิดชอบการออกแบบและพัฒนาเนื้อหาการเรียนรู้ผ่านสื่ออิเล็กทรอนิกส์ (E-Learning) เพื่อสนับสนุนและพัฒนาศักยภาพบุคลากรทางการศึกษา', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200' }],
+    contents: [
+      { id: 1, title: 'บทนำงานสารบรรณ (วิดีโอ)', type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+      { id: 2, title: 'เอกสารประกอบการเรียน (PDF)', type: 'pdf', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
+    ],
     exam: [
       { id: 1, text: 'หนังสือราชการมีกี่ชนิด?', options: ['4 ชนิด', '5 ชนิด', '6 ชนิด', '7 ชนิด'], correctAnswer: 2 },
       { id: 2, text: 'ข้อใดคือส่วนประกอบที่สำคัญที่สุดของหนังสือราชการ?', options: ['ตราครุฑ', 'วันที่', 'ลายมือชื่อ', 'เนื้อหาใจความ'], correctAnswer: 3 }
@@ -46,13 +49,12 @@ const initialCourses: Course[] = [
 
 const initialSettings: SystemSettings = {
   orgName: 'สำนักงานเขตพื้นที่การศึกษาประถมศึกษาชัยภูมิ เขต 2',
-  signatoryName: '(นางบรรเจิด อุ่นมณีรัตน์)',
+  signatoryName: '(นายสมชาย ตัวอย่าง)',
   signatoryTitle: 'ผู้อำนวยการสำนักงานเขตพื้นที่การศึกษาประถมศึกษาชัยภูมิ เขต 2',
   logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/ตรากระทรวงศึกษาธิการ.svg/400px-ตรากระทรวงศึกษาธิการ.svg.png',
   signatureUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Signature_of_John_Hancock.svg/300px-Signature_of_John_Hancock.svg.png' 
 };
 
-// --- ข้อมูลผู้ใช้จำลอง ---
 const currentUser = { name: 'นางสาวกศิมาตย์ ทองเนียม', role: 'ผู้ดูแลระบบและผู้เรียน' }; 
 
 // --- [1] หน้า Login ---
@@ -65,7 +67,6 @@ const LoginView = ({ onLogin }: { onLogin: () => void }) => (
 // --- ✅ ใบประกาศนียบัตร (Certificate Modal) ---
 const CertificateModal = ({ course, settings, onClose }: { course: Course, settings: SystemSettings, onClose: () => void }) => {
   const printCertificate = () => { window.print(); };
-
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 print:p-0 print:bg-white overflow-y-auto">
       <div className="bg-white w-full max-w-5xl rounded-xl shadow-2xl overflow-hidden print:shadow-none print:w-[297mm] print:h-[210mm] relative">
@@ -156,46 +157,67 @@ const CourseDetailView = ({ course, settings, onBack }: { course: Course, settin
   };
 
   return (
-    <div className="space-y-6 animate-fade-in w-full relative">
+    <div className="space-y-4 animate-fade-in w-full relative">
       <button onClick={onBack} className="text-blue-600 hover:text-blue-900 flex items-center gap-2 font-bold bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg inline-flex transition"><span>⬅️</span> กลับไปหน้าหลักสูตร</button>
       
       {showCertificate && <CertificateModal course={course} settings={settings} onClose={() => setShowCertificate(false)} />}
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
-        <div className="h-48 lg:h-64 bg-blue-900 text-white p-8 flex flex-col justify-end relative overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full flex flex-col">
+        
+        {/* 🔴 ปรับลดความสูง (จาก h-64 เป็น h-32/h-40) และปรับขนาดฟอนต์ให้เล็กลง */}
+        <div className="h-32 lg:h-40 bg-blue-900 text-white p-6 lg:p-8 flex flex-col justify-end relative overflow-hidden shrink-0">
            <img src={course.image} className="absolute inset-0 w-full h-full object-cover opacity-20" alt="bg" />
            <div className="absolute inset-0 bg-gradient-to-t from-blue-900 to-transparent opacity-80"></div>
-           <h2 className="text-3xl lg:text-4xl font-bold relative z-10">{course.title}</h2>
+           <h2 className="text-2xl lg:text-3xl font-bold relative z-10 leading-tight">{course.title}</h2>
         </div>
 
-        <div className="flex border-b border-slate-200 bg-slate-50 overflow-x-auto scrollbar-hide">
+        {/* 🔴 ปรับความสูงของแถบเมนู (Tabs) ให้บางลง */}
+        <div className="flex border-b border-slate-200 bg-slate-50 overflow-x-auto scrollbar-hide shrink-0">
           {[{ id: 'content', label: '1. เนื้อหาบทเรียน', icon: '📚' }, { id: 'instructor', label: '2. ผู้พัฒนาหลักสูตร', icon: '👨‍🏫' }, { id: 'exam', label: '3. แบบทดสอบ', icon: '📝' }, { id: 'passed', label: '4. ผู้ผ่านการอบรม', icon: '🏆' }].map(tab => (
-            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setExamState('intro'); }} className={`flex-1 py-4 px-6 text-sm lg:text-base font-bold flex items-center justify-center gap-2 transition whitespace-nowrap ${activeTab === tab.id ? 'border-b-4 border-blue-900 text-blue-900 bg-white' : 'text-slate-500 hover:bg-slate-100'}`}><span>{tab.icon}</span> {tab.label}</button>
+            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setExamState('intro'); }} className={`flex-1 py-3 px-5 text-sm lg:text-base font-bold flex items-center justify-center gap-2 transition whitespace-nowrap ${activeTab === tab.id ? 'border-b-4 border-blue-900 text-blue-900 bg-white' : 'text-slate-500 hover:bg-slate-100'}`}><span>{tab.icon}</span> {tab.label}</button>
           ))}
         </div>
 
-        <div className="p-6 lg:p-8 min-h-[400px]">
+        <div className="p-4 lg:p-6 flex-1 flex flex-col">
           {activeTab === 'content' && (
-            <div className="flex flex-col lg:flex-row gap-8">
-              <div className="w-full lg:w-1/4 xl:w-1/5 lg:border-r pr-4 flex flex-col gap-6">
-                <div className="bg-slate-50 p-5 rounded-xl border border-slate-200"><h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2"><span>📌</span> คำอธิบายหลักสูตร</h3><p className="text-sm text-slate-600 leading-relaxed">{course.intro || 'ไม่มีคำอธิบาย'}</p></div>
-                <div>
-                  <h3 className="font-bold text-lg border-b pb-2 mb-4 text-slate-800">สารบัญเนื้อหา</h3>
+            <div className="flex flex-col lg:flex-row gap-6 flex-1">
+              <div className="w-full lg:w-1/4 xl:w-1/5 lg:border-r pr-4 flex flex-col gap-4">
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200"><h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2"><span>📌</span> คำอธิบายหลักสูตร</h3><p className="text-sm text-slate-600 leading-relaxed">{course.intro || 'ไม่มีคำอธิบาย'}</p></div>
+                <div className="flex-1 overflow-y-auto">
+                  <h3 className="font-bold text-lg border-b pb-2 mb-3 text-slate-800">สารบัญเนื้อหา</h3>
                   <div className="space-y-2">
                     {course.contents.map((mod, idx) => (
-                      <button key={mod.id} onClick={() => setActiveLesson(mod)} className={`w-full text-left p-4 rounded-xl border flex items-center gap-4 transition ${activeLesson?.id === mod.id ? 'bg-blue-50 border-blue-200 text-blue-900 shadow-sm' : 'hover:bg-slate-50 text-slate-600'}`}>
-                        <div className="text-2xl shrink-0">{mod.type === 'video' ? '▶️' : '📄'}</div><div className="font-medium text-sm leading-snug"><span className="text-slate-400 text-xs block mb-1">บทที่ {idx + 1}</span>{mod.title || 'ไม่มีชื่อบทเรียน'}</div>
+                      <button key={mod.id} onClick={() => setActiveLesson(mod)} className={`w-full text-left p-3 rounded-xl border flex items-center gap-3 transition ${activeLesson?.id === mod.id ? 'bg-blue-50 border-blue-200 text-blue-900 shadow-sm' : 'hover:bg-slate-50 text-slate-600'}`}>
+                        <div className="text-xl shrink-0">{mod.type === 'video' ? '▶️' : '📄'}</div><div className="font-medium text-sm leading-snug"><span className="text-slate-400 text-xs block mb-1">บทที่ {idx + 1}</span>{mod.title || 'ไม่มีชื่อบทเรียน'}</div>
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="w-full lg:w-3/4 xl:w-4/5 bg-slate-100 rounded-xl min-h-[500px] flex flex-col overflow-hidden relative border border-slate-200 shadow-inner">
+              <div className="w-full lg:w-3/4 xl:w-4/5 bg-slate-100 rounded-xl min-h-[500px] lg:h-[calc(100vh-320px)] flex flex-col overflow-hidden relative border border-slate-200 shadow-inner">
                 {!activeLesson ? <div className="flex-1 flex items-center justify-center"><p className="text-slate-400 font-bold">👈 เลือกบทเรียนจากเมนูด้านซ้ายเพื่อเริ่มเรียน</p></div> : 
                   activeLesson.type === 'video' ? (
-                    <div className="flex-1 flex flex-col"><div className="w-full aspect-video bg-black flex items-center justify-center relative">{activeLesson.url ? <iframe className="absolute inset-0 w-full h-full" src={getYouTubeEmbedUrl(activeLesson.url)} title={activeLesson.title} frameBorder="0" allowFullScreen></iframe> : <p className="text-slate-500">ยังไม่ได้ระบุลิงก์วิดีโอ</p>}</div><div className="p-4 bg-white border-t"><h4 className="font-bold text-lg">{activeLesson.title}</h4></div></div>
+                    <div className="flex-1 flex flex-col"><div className="w-full h-full bg-black flex items-center justify-center relative">{activeLesson.url ? <iframe className="absolute inset-0 w-full h-full" src={getYouTubeEmbedUrl(activeLesson.url)} title={activeLesson.title} frameBorder="0" allowFullScreen></iframe> : <p className="text-slate-500">ยังไม่ได้ระบุลิงก์วิดีโอ</p>}</div><div className="p-4 bg-white border-t shrink-0"><h4 className="font-bold text-lg">{activeLesson.title}</h4></div></div>
                   ) : (
-                    <div className="w-full h-full min-h-[500px] flex flex-col"><div className="bg-slate-800 text-white px-4 py-3 text-sm font-medium z-10 shadow-md">📄 โปรแกรมเปิดอ่านเอกสาร PDF/PPT</div><div className="bg-slate-200 flex-1 overflow-y-auto p-4 md:p-8 flex justify-center"><div className="bg-white w-full max-w-4xl h-[800px] shadow-lg border border-slate-300 p-10 flex flex-col items-center justify-center text-center"><div className="text-6xl mb-4 opacity-20">📑</div><h2 className="text-2xl font-bold text-slate-300 mb-2">{activeLesson.title}</h2><p className="text-slate-400 mt-4 max-w-md">หน้าต่างแสดงไฟล์เอกสาร PDF/PPT</p><p className="text-slate-300 text-xs mt-8 font-mono bg-slate-50 px-2 py-1 rounded border overflow-hidden max-w-full break-all">ลิงก์: {activeLesson.url || 'ไม่ได้ระบุ'}</p></div></div></div>
+                    <div className="w-full h-full flex flex-col">
+                      <div className="bg-slate-800 text-white px-4 py-3 text-sm font-medium z-10 shadow-md flex justify-between items-center shrink-0">
+                        <span>📄 โปรแกรมเปิดอ่านเอกสาร PDF/PPT</span>
+                        {activeLesson.url && (
+                          <a href={activeLesson.url} target="_blank" rel="noreferrer" className="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-xs transition border border-slate-600 flex items-center gap-1">เปิดหน้าต่างใหม่ ↗️</a>
+                        )}
+                      </div>
+                      <div className="bg-slate-200 flex-1 overflow-hidden flex justify-center w-full h-full relative">
+                        {activeLesson.url ? (
+                          <iframe src={activeLesson.url.toLowerCase().endsWith('.pdf') ? activeLesson.url : `https://docs.google.com/viewer?url=${encodeURIComponent(activeLesson.url)}&embedded=true`} title={activeLesson.title} className="w-full h-full border-0" allowFullScreen />
+                        ) : (
+                          <div className="bg-white w-full h-full shadow-lg border border-slate-300 p-10 flex flex-col items-center justify-center text-center">
+                            <div className="text-6xl mb-4 opacity-20">📑</div>
+                            <h2 className="text-2xl font-bold text-slate-300 mb-2">{activeLesson.title}</h2>
+                            <p className="text-slate-400 mt-4">ยังไม่ได้ระบุลิงก์ไฟล์เอกสาร</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )
                 }
               </div>
@@ -232,7 +254,7 @@ const CourseDetailView = ({ course, settings, onBack }: { course: Course, settin
             </div>
           )}
 
-          {activeTab === 'passed' && (<div className="w-full"><h3 className="text-xl font-bold text-slate-800 mb-4 flex justify-between items-center">ทำเนียบผู้ผ่านการอบรม<span className="text-sm font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-200">ผ่านแล้ว 42 คน</span></h3><div className="border border-slate-200 rounded-lg overflow-hidden"><table className="w-full text-left"><thead className="bg-slate-50 border-b"><tr><th className="p-4 text-slate-600 font-bold">ชื่อ - นามสกุล</th><th className="p-4 text-slate-600 font-bold text-right">วันที่ผ่าน</th></tr></thead><tbody className="divide-y divide-slate-100"><tr className="hover:bg-slate-50"><td className="p-4 flex items-center gap-3"><div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-900">กศ</div> {currentUser.name}</td><td className="p-4 text-right text-slate-500">{getThaiDateString()}</td></tr></tbody></table></div></div>)}
+          {activeTab === 'passed' && (<div className="w-full"><h3 className="text-xl font-bold text-slate-800 mb-4 flex justify-between items-center">ทำเนียบผู้ผ่านการอบรม<span className="text-sm font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-200">ผ่านแล้ว 42 คน</span></h3><div className="border border-slate-200 rounded-lg overflow-hidden"><table className="w-full text-left"><thead className="bg-slate-50 border-b"><tr><th className="p-4 text-slate-600 font-bold">ชื่อ - นามสกุล</th><th className="p-4 text-slate-600 font-bold text-right">วันที่ผ่าน</th></tr></thead><tbody className="divide-y divide-slate-100"><tr className="hover:bg-slate-50"><td className="p-4 flex items-center gap-3"><div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-900">กศ</div> {currentUser.name}</td><td className="p-4 text-right text-slate-500">{getThaiDateString()}</td></tr><tr className="hover:bg-slate-50"><td className="p-4 flex items-center gap-3"><div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-900">วร</div> นางสาว วรรณภา สุขใจ</td><td className="p-4 text-right text-slate-500">25 ต.ค. 66</td></tr></tbody></table></div></div>)}
         </div>
       </div>
     </div>
@@ -250,7 +272,7 @@ const AdminSystemSettingsView = ({ settings, setSettings }: { settings: SystemSe
     <div className="space-y-6 animate-fade-in w-full">
       <div className="flex justify-between items-center border-b pb-4"><h2 className="text-2xl font-bold text-slate-800">⚙️ ตั้งค่าระบบและวุฒิบัตร</h2><button onClick={handleSave} className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2 rounded-lg font-bold shadow-md transition flex items-center gap-2">💾 บันทึกการตั้งค่า</button></div>
       {isSaved && <div className="bg-green-100 text-green-800 p-4 rounded-lg font-bold border border-green-300 shadow-sm">✅ บันทึกข้อมูลสำเร็จ! ข้อมูลนี้จะถูกนำไปใช้ออกใบประกาศนียบัตร</div>}
-      <div className="bg-white rounded-xl shadow-sm border p-6 md:p-8 space-y-8">
+      <div className="bg-white rounded-xl shadow-sm border p-6 md:p-8 space-y-8 max-w-4xl">
         <div><h3 className="font-bold text-lg text-slate-800 mb-4 border-b pb-2">1. ข้อมูลหน่วยงานหลัก</h3><div className="space-y-4"><div><label className="block text-sm font-bold text-slate-700 mb-1">ชื่อหน่วยงาน / องค์กร (แสดงหัวกระดาษ)</label><input type="text" value={formData.orgName} onChange={e => setFormData({...formData, orgName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900" /></div><div><label className="block text-sm font-bold text-slate-700 mb-1">โลโก้หน่วยงาน (URL รูปภาพ)</label><input type="text" value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} className="w-full px-4 py-2 border rounded-lg font-mono text-sm text-blue-600" /></div></div></div>
         <div><h3 className="font-bold text-lg text-slate-800 mb-4 border-b pb-2">2. ข้อมูลผู้ลงนาม (ลายเซ็นบนวุฒิบัตร)</h3><div className="space-y-4"><div className="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label className="block text-sm font-bold text-slate-700 mb-1">ชื่อผู้ลงนาม (เช่น (นาย...))</label><input type="text" value={formData.signatoryName} onChange={e => setFormData({...formData, signatoryName: e.target.value})} className="w-full px-4 py-2 border rounded-lg" /></div><div><label className="block text-sm font-bold text-slate-700 mb-1">ตำแหน่ง</label><input type="text" value={formData.signatoryTitle} onChange={e => setFormData({...formData, signatoryTitle: e.target.value})} className="w-full px-4 py-2 border rounded-lg" /></div></div><div><label className="block text-sm font-bold text-slate-700 mb-1">ภาพลายเซ็น (URL พื้นหลังใส PNG)</label><input type="text" value={formData.signatureUrl} onChange={e => setFormData({...formData, signatureUrl: e.target.value})} className="w-full px-4 py-2 border rounded-lg font-mono text-sm text-blue-600" /></div></div></div>
       </div>
@@ -289,11 +311,24 @@ const AdminManagerView = ({ courses, setCourses }: { courses: Course[], setCours
 const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSave: (c: Course) => void, onCancel: () => void }) => {
   const [formData, setFormData] = useState<Course>({ ...course });
   const [isAiGenerating, setIsAiGenerating] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importText, setImportText] = useState('');
 
   const handleAddContent = () => setFormData({...formData, contents: [...formData.contents, { id: Date.now(), title: '', type: 'video', url: '' }]});
   const handleRemoveContent = (id: number) => setFormData({...formData, contents: formData.contents.filter(c => c.id !== id)});
   const handleAddInstructor = () => setFormData({...formData, instructors: [...formData.instructors, { id: Date.now(), name: '', role: '', description: '', image: '' }]});
   const handleRemoveInstructor = (id: number) => setFormData({...formData, instructors: formData.instructors.filter(i => i.id !== id)});
+  const handleAddQuestionManual = () => setFormData(prev => ({ ...prev, exam: [...prev.exam, { id: Date.now(), text: '', options: ['', '', '', ''], correctAnswer: 0 }] }));
+
+  const handleImportText = () => {
+    const lines = importText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const newQuestions: Question[] = [];
+    for (let i = 0; i < lines.length; i += 5) {
+      if (lines[i]) newQuestions.push({ id: Date.now() + i, text: lines[i], options: [lines[i+1] || '', lines[i+2] || '', lines[i+3] || '', lines[i+4] || ''], correctAnswer: 0 });
+    }
+    if (newQuestions.length > 0) setFormData(prev => ({ ...prev, exam: [...prev.exam, ...newQuestions] }));
+    setImportText(''); setShowImportModal(false);
+  };
 
   const handleAiGenerate = () => {
     setIsAiGenerating(true);
@@ -307,12 +342,28 @@ const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSav
   };
 
   return (
-    <div className="space-y-6 animate-fade-in w-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4 sticky top-[72px] bg-slate-50 z-20 pt-4">
+    <div className="space-y-6 animate-fade-in w-full relative">
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b bg-slate-50 flex justify-between items-center"><h3 className="font-bold text-lg text-slate-800">📥 นำเข้าข้อสอบจาก Word / Excel</h3><button onClick={() => setShowImportModal(false)} className="text-slate-400 hover:text-red-500 font-bold">✕ ปิด</button></div>
+            <div className="p-6 flex-1 overflow-y-auto space-y-4">
+              <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm border border-blue-200"><strong>วิธีใช้งาน:</strong> ให้ Copy ข้อความจาก Word หรือ Excel มาวางในกล่องด้านล่าง โดยเรียงลำดับให้ <strong>1 ข้อใช้ 5 บรรทัด</strong> (คำถาม 1 บรรทัด, ตัวเลือก 4 บรรทัด)</div>
+              <textarea value={importText} onChange={e => setImportText(e.target.value)} placeholder="วางข้อความข้อสอบที่นี่..." className="w-full h-[300px] p-4 border border-slate-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none resize-none" />
+            </div>
+            <div className="p-4 border-t bg-slate-50 flex justify-end gap-3">
+              <button onClick={() => setShowImportModal(false)} className="px-6 py-2 bg-white border border-slate-300 rounded-lg font-bold hover:bg-slate-100">ยกเลิก</button>
+              <button onClick={handleImportText} disabled={!importText.trim()} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 shadow-md">✅ นำเข้าข้อมูล</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-300 pb-4 gap-4 mb-6">
         <div><h2 className="text-2xl font-bold text-slate-800">✏️ จัดการข้อมูลหลักสูตร</h2></div>
         <div className="space-x-3 w-full md:w-auto flex">
-          <button onClick={onCancel} className="flex-1 md:flex-none px-6 py-2.5 bg-white border border-slate-300 hover:bg-slate-100 rounded-lg font-bold shadow-sm">ยกเลิก</button>
-          <button onClick={() => onSave(formData)} className="flex-1 md:flex-none px-6 py-2.5 bg-blue-900 text-white hover:bg-blue-800 rounded-lg font-bold shadow-md">💾 บันทึกทั้งหมด</button>
+          <button onClick={onCancel} className="flex-1 md:flex-none px-6 py-2.5 bg-white border border-slate-300 hover:bg-slate-100 rounded-lg font-bold shadow-sm transition">ยกเลิก</button>
+          <button onClick={() => onSave(formData)} className="flex-1 md:flex-none px-6 py-2.5 bg-blue-900 text-white hover:bg-blue-800 rounded-lg font-bold shadow-md transition">💾 บันทึกทั้งหมด</button>
         </div>
       </div>
 
@@ -367,27 +418,44 @@ const AdminCourseEditor = ({ course, onSave, onCancel }: { course: Course, onSav
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-auto xl:h-[calc(100vh-170px)] xl:sticky xl:top-[120px]">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-auto">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 border-b pb-4 shrink-0">
             <div>
               <h3 className="text-lg font-bold flex items-center gap-2"><span className="bg-blue-100 text-blue-900 w-8 h-8 rounded-full flex items-center justify-center">4</span> แบบประเมิน (Exam)</h3>
               <div className="mt-2 ml-10 flex items-center gap-2 text-sm text-slate-600 font-bold">เกณฑ์ผ่าน: <input type="number" value={formData.passingPercentage} onChange={e => setFormData({...formData, passingPercentage: Number(e.target.value)})} className="w-16 px-2 py-1 border rounded text-center text-blue-900" min="1" max="100"/> %</div>
             </div>
-            <button onClick={handleAiGenerate} disabled={isAiGenerating} className={`px-5 py-2.5 rounded-lg font-bold text-sm text-white shadow-md ${isAiGenerating ? 'bg-indigo-400 cursor-not-allowed animate-pulse' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700'}`}>{isAiGenerating ? '⏳ AI กำลังประมวลผลไฟล์...' : '✨ สร้างข้อสอบด้วย AI'}</button>
+            <div className="flex flex-wrap gap-2 w-full xl:w-auto">
+              <button onClick={handleAddQuestionManual} className="flex-1 xl:flex-none px-4 py-2.5 rounded-lg font-bold text-sm bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition shadow-sm">➕ เพิ่มข้อสอบเอง</button>
+              <button onClick={() => setShowImportModal(true)} className="flex-1 xl:flex-none px-4 py-2.5 rounded-lg font-bold text-sm bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition shadow-sm">📥 นำเข้าจาก Word/Excel</button>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+          
+          <div className="flex-1 space-y-4">
             {formData.exam.map((q, qIndex) => (
-              <div key={q.id} className="p-5 border rounded-xl bg-white relative group">
-                <button onClick={() => setFormData({...formData, exam: formData.exam.filter(x => x.id !== q.id)})} className="absolute top-4 right-4 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 bg-slate-50 rounded-full w-8 h-8 flex items-center justify-center">🗑️</button>
-                <p className="font-bold text-slate-800 mb-4 pr-10"><span className="text-blue-600 mr-1">ข้อ {qIndex + 1}.</span> {q.text}</p>
+              <div key={q.id} className="p-5 border border-slate-300 rounded-xl bg-white relative shadow-sm">
+                <button onClick={() => setFormData({...formData, exam: formData.exam.filter(x => x.id !== q.id)})} className="absolute top-4 right-4 text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 rounded-full w-8 h-8 flex items-center justify-center transition" title="ลบข้อนี้">🗑️</button>
+                <div className="mb-4 pr-10">
+                  <label className="font-bold text-slate-800 flex items-center gap-2 mb-2"><span className="text-blue-600">ข้อ {qIndex + 1}.</span> คำถาม</label>
+                  <input type="text" value={q.text} onChange={(e) => { const newExam = [...formData.exam]; newExam[qIndex].text = e.target.value; setFormData({...formData, exam: newExam}); }} placeholder="พิมพ์คำถามที่นี่..." className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none" />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {q.options.map((opt, oIndex) => (<div key={oIndex} className={`p-3 border rounded-lg text-sm flex items-start gap-3 cursor-pointer ${q.correctAnswer === oIndex ? 'bg-green-50 border-green-400 text-green-800 font-bold shadow-inner' : 'hover:bg-slate-50 border-slate-200'}`}><input type="radio" checked={q.correctAnswer === oIndex} readOnly className="mt-1 w-4 h-4 text-green-600 cursor-pointer" /> <span>{opt}</span></div>))}
+                  {q.options.map((opt, oIndex) => (
+                    <div key={oIndex} className={`p-3 border rounded-lg flex items-center gap-3 transition ${q.correctAnswer === oIndex ? 'bg-green-50 border-green-400 shadow-inner' : 'bg-slate-50 border-slate-200'}`}>
+                      <input type="radio" name={`correct-${q.id}`} checked={q.correctAnswer === oIndex} onChange={() => { const newExam = [...formData.exam]; newExam[qIndex].correctAnswer = oIndex; setFormData({...formData, exam: newExam}); }} className="w-5 h-5 text-green-600 cursor-pointer shrink-0" title="เลือกเป็นข้อที่ถูก" /> 
+                      <input type="text" value={opt} onChange={(e) => { const newExam = [...formData.exam]; newExam[qIndex].options[oIndex] = e.target.value; setFormData({...formData, exam: newExam}); }} placeholder={`ตัวเลือกที่ ${oIndex + 1}`} className="flex-1 px-3 py-1.5 border border-slate-300 rounded bg-white text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" />
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
-            {formData.exam.length === 0 && !isAiGenerating && <div className="text-center py-16 border-2 border-dashed rounded-xl bg-slate-50 flex flex-col items-center justify-center"><h4 className="font-bold text-slate-500">ยังไม่มีแบบทดสอบในระบบ</h4></div>}
+            {formData.exam.length === 0 && <div className="text-center py-16 border-2 border-dashed rounded-xl bg-slate-50 flex flex-col items-center justify-center"><h4 className="font-bold text-slate-500">ยังไม่มีแบบทดสอบในระบบ กดปุ่มด้านบนเพื่อเพิ่ม</h4></div>}
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-300">
+        <button onClick={onCancel} className="px-8 py-3 bg-white border border-slate-300 hover:bg-slate-100 rounded-lg font-bold shadow-sm transition text-lg">ยกเลิก</button>
+        <button onClick={() => onSave(formData)} className="px-8 py-3 bg-blue-900 text-white hover:bg-blue-800 rounded-lg font-bold shadow-md transition text-lg">💾 บันทึกการเปลี่ยนแปลงทั้งหมด</button>
       </div>
     </div>
   );
@@ -408,9 +476,8 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       
       {/* 🔴 Top Navigation Bar */}
-      <header className="bg-blue-900 text-white shadow-md sticky top-0 z-50 w-full">
+      <header className="bg-blue-900 text-white shadow-md sticky top-0 z-40 w-full">
         <div className="px-4 md:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-4 w-full">
-           {/* โลโก้ และ ชื่อองค์กร */}
            <div className="flex items-center justify-between w-full md:w-auto">
              <div className="flex items-center gap-3">
                <h1 className="text-2xl font-bold tracking-wide">E-Learning</h1>
@@ -420,18 +487,16 @@ export default function App() {
              <button onClick={() => setIsLoggedIn(false)} className="md:hidden text-red-300 hover:text-white transition">🚪 ออกจากระบบ</button>
            </div>
 
-           {/* เมนูหลัก (เอาคำว่า จัดการระบบ: ออก) */}
+           {/* เมนูหลัก */}
            <nav className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide text-sm md:text-base">
              <button onClick={() => setCurrentMenu('home')} className={`whitespace-nowrap px-4 py-2 rounded-lg transition flex items-center gap-2 ${currentMenu==='home' || currentMenu==='detail' ? 'bg-blue-800 font-bold text-white shadow-inner' : 'text-blue-200 hover:bg-blue-800 hover:text-white'}`}>🏠 หน้าแรก</button>
              
-             {/* ตัวแบ่งเมนู */}
              <div className="h-6 w-px bg-blue-800 hidden sm:block mx-2"></div>
              
              <button onClick={() => setCurrentMenu('admin')} className={`whitespace-nowrap px-4 py-2 rounded-lg transition flex items-center gap-2 ${currentMenu==='admin' ? 'bg-blue-800 font-bold text-white shadow-inner' : 'text-blue-200 hover:bg-blue-800 hover:text-white'}`}>🛠️ จัดการหลักสูตร</button>
              <button onClick={() => setCurrentMenu('settings')} className={`whitespace-nowrap px-4 py-2 rounded-lg transition flex items-center gap-2 ${currentMenu==='settings' ? 'bg-blue-800 font-bold text-white shadow-inner' : 'text-blue-200 hover:bg-blue-800 hover:text-white'}`}>⚙️ ตั้งค่าระบบ</button>
            </nav>
 
-           {/* ฝั่งขวา: โปรไฟล์ผู้ใช้งาน */}
            <div className="hidden md:flex items-center gap-3 shrink-0">
              <div className="text-right">
                <p className="text-sm font-bold">{currentUser.name}</p>
@@ -443,7 +508,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* 🔴 Main Content Area (ขยายเต็มจอ) */}
+      {/* 🔴 Main Content Area */}
       <main className="flex-1 w-full p-4 md:p-8 overflow-y-auto">
         <div className="w-full">
           {currentMenu === 'home' && <CourseCatalogView courses={courses} settings={settings} onViewCourse={(c) => { setSelectedCourse(c); setCurrentMenu('detail'); }} />}
