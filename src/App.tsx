@@ -49,7 +49,6 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
   useEffect(() => {
     const initLiff = async () => {
       try {
-        // ✅ เอาการเปรียบเทียบที่ทำให้ Error ออก
         if (!LIFF_ID) {
           setIsLiffLoading(false);
           return; 
@@ -159,7 +158,6 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
           <button onClick={() => { setIsLoginMode(!isLoginMode); setError(''); }} className="text-blue-600 font-bold hover:underline">{isLoginMode ? 'สมัครสมาชิก' : 'เข้าสู่ระบบเลย'}</button>
         </div>
 
-        {/* ✅ เอาการเปรียบเทียบที่ทำให้ Error ออก */}
         {!lineProfile && LIFF_ID && (
           <button onClick={handleLineLogin} className="w-full mt-4 p-3 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-lg text-center font-bold transition shadow-md flex items-center justify-center gap-2">
             💬 เข้าสู่ระบบด้วย LINE
@@ -562,6 +560,18 @@ export default function App() {
   const handleUpdateUser = async (updatedUser: User) => await setDoc(doc(db, "users", updatedUser.id.toString()), updatedUser);
   const handleDeleteUser = async (userId: number) => await deleteDoc(doc(db, "users", userId.toString()));
 
+  // ✅ เพิ่มฟังก์ชันเพื่อสั่งลบ session ของ LINE ก่อนออกจากระบบ
+  const handleLogout = () => {
+    try {
+      if (liff.isLoggedIn()) {
+        liff.logout();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setCurrentUser(null);
+  };
+
   if (loading) return <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50"><div className="text-5xl animate-spin mb-4">⏳</div><h2 className="text-xl font-bold text-blue-900">กำลังเชื่อมต่อฐานข้อมูล...</h2></div>;
   
   if (!currentUser) return <LoginRegisterView onLogin={setCurrentUser} usersDb={usersDb} onRegister={handleRegisterUser} onUpdateUser={handleUpdateUser} />;
@@ -576,7 +586,8 @@ export default function App() {
                <div className="hidden lg:block h-6 w-px bg-blue-700"></div>
                <p className="text-blue-200 text-sm hidden lg:block whitespace-nowrap">{settings.orgName}</p>
              </div>
-             <button onClick={() => setCurrentUser(null)} className="md:hidden text-red-300 hover:text-white transition font-bold">🚪 ออกจากระบบ</button>
+             {/* ✅ เปลี่ยนปุ่ม Logout เป็นเรียกใช้ฟังก์ชัน handleLogout */}
+             <button onClick={handleLogout} className="md:hidden text-red-300 hover:text-white transition font-bold">🚪 ออกจากระบบ</button>
            </div>
            <nav className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide text-sm md:text-base">
              <button onClick={() => setCurrentMenu('home')} className={`whitespace-nowrap px-4 py-2 rounded-lg transition flex items-center gap-2 ${currentMenu==='home' || currentMenu==='detail' ? 'bg-blue-800 font-bold text-white shadow-inner' : 'text-blue-200 hover:bg-blue-800 hover:text-white'}`}>🏠 หน้าแรก</button>
@@ -597,7 +608,8 @@ export default function App() {
                <p className="text-xs text-blue-300 uppercase">{currentUser.role}</p>
              </div>
              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-900 font-bold shadow-inner">{currentUser.username[0].toUpperCase()}</div>
-             <button onClick={() => setCurrentUser(null)} className="ml-2 text-red-300 hover:text-red-400 transition bg-blue-800 hover:bg-blue-700 p-2 rounded-lg" title="ออกจากระบบ">🚪</button>
+             {/* ✅ เปลี่ยนปุ่ม Logout เป็นเรียกใช้ฟังก์ชัน handleLogout */}
+             <button onClick={handleLogout} className="ml-2 text-red-300 hover:text-red-400 transition bg-blue-800 hover:bg-blue-700 p-2 rounded-lg" title="ออกจากระบบ">🚪</button>
            </div>
         </div>
       </header>
