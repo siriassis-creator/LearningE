@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { collection, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase'; 
-import liff from '@line/liff'; // ✅ นำเข้า LINE LIFF SDK
+import liff from '@line/liff'; 
 
-// 🔴 นำ LIFF ID ที่ได้จาก LINE Developers มาใส่ตรงนี้ครับ!
+// ✅ ใส่ LIFF ID ของคุณเรียบร้อยแล้ว
 const LIFF_ID = "2009628432-xW2BZzYX"; 
 
 // --- Types ---
@@ -33,27 +33,26 @@ const getThaiDateString = () => {
   return `${d.getDate()} เดือน${months[d.getMonth()]} พุทธศักราช ${d.getFullYear() + 543}`;
 };
 
-// --- ข้อมูลจำลอง ---
 const initialCourses: Course[] = [{ id: 1, title: 'ระเบียบงานสารบรรณ พ.ศ. 2566', image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=400&h=250', intro: 'หลักสูตรพื้นฐานสำหรับบุคลากรทางการศึกษา...', isActive: true, passingPercentage: 80, instructors: [{ id: 1, name: 'อ. สมชาย รักเรียน', role: 'ผู้เชี่ยวชาญ สพป.ชัยภูมิ เขต 2', description: 'ผู้เชี่ยวชาญด้านการพัฒนาบุคลากร', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200' }], contents: [{ id: 1, title: 'บทนำงานสารบรรณ (วิดีโอ)', type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }], exam: [{ id: 1, text: 'หนังสือราชการมีกี่ชนิด?', options: ['4 ชนิด', '5 ชนิด', '6 ชนิด', '7 ชนิด'], correctAnswer: 2 }, { id: 2, text: 'ข้อใดคือส่วนประกอบที่สำคัญที่สุดของหนังสือราชการ?', options: ['ตราครุฑ', 'วันที่', 'ลายมือชื่อ', 'เนื้อหาใจความ'], correctAnswer: 3 }] }];
 const initialSettings: SystemSettings = { orgName: 'สำนักงานเขตพื้นที่การศึกษาประถมศึกษาชัยภูมิ เขต 2', signatoryName: '(นายสมชาย ตัวอย่าง)', signatoryTitle: 'ผู้อำนวยการสำนักงานเขตพื้นที่การศึกษาประถมศึกษาชัยภูมิ เขต 2', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/ตรากระทรวงศึกษาธิการ.svg/400px-ตรากระทรวงศึกษาธิการ.svg.png', signatureUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Signature_of_John_Hancock.svg/300px-Signature_of_John_Hancock.svg.png' };
 const mockUsersDb: User[] = [ { id: 1, username: 'admin', password: '123', name: 'ผู้ดูแลระบบสูงสุด', role: 'admin', registerSource: 'admin' } ];
 
-// --- [1] ✅ หน้า Login & Register (รองรับ LINE LIFF) ---
+// --- [1] หน้า Login & Register ---
 const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onLogin: (u: User) => void, usersDb: User[], onRegister: (u: User) => void, onUpdateUser: (u: User) => void }) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({ username: '', password: '', name: '' });
   const [error, setError] = useState('');
   
-  // States สำหรับ LINE LIFF
   const [isLiffLoading, setIsLiffLoading] = useState(true);
   const [lineProfile, setLineProfile] = useState<{ userId: string; displayName: string; pictureUrl?: string } | null>(null);
 
   useEffect(() => {
     const initLiff = async () => {
       try {
-        if (!LIFF_ID || LIFF_ID === "ใส่_LIFF_ID_ของคุณที่นี่") {
+        // ✅ เอาการเปรียบเทียบที่ทำให้ Error ออก
+        if (!LIFF_ID) {
           setIsLiffLoading(false);
-          return; // ข้ามถ้ายัังไม่ได้ตั้งค่า LIFF ID
+          return; 
         }
 
         await liff.init({ liffId: LIFF_ID });
@@ -61,14 +60,12 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
           const profile = await liff.getProfile();
           setLineProfile(profile);
 
-          // ตรวจสอบว่าบัญชี LINE นี้เคยผูกกับ User ในระบบหรือยัง
           const existingUser = usersDb.find(u => u.lineUserId === profile.userId);
           if (existingUser) {
-            onLogin(existingUser); // เคยผูกแล้ว ล็อกอินอัตโนมัติเลย!
+            onLogin(existingUser); 
           } else {
-            // ดึงชื่อจาก LINE มากรอกรอไว้ให้
             setFormData(prev => ({ ...prev, name: profile.displayName }));
-            setIsLoginMode(false); // บังคับให้ไปหน้าสมัครสมาชิก
+            setIsLoginMode(false); 
           }
         }
       } catch (err) {
@@ -82,7 +79,7 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
 
   const handleLineLogin = () => {
     if (!liff.isLoggedIn()) {
-      liff.login(); // เด้งไปหน้าให้สิทธิ์ LINE
+      liff.login();
     }
   };
 
@@ -91,7 +88,6 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
     if (isLoginMode) {
       const user = usersDb.find(u => u.username === formData.username && u.password === formData.password);
       if (user) {
-        // หากล็อกอินด้วยรหัสผ่านปกติ แต่กำลังใช้ผ่าน LINE (LIFF) อยู่ ให้ผูกบัญชี LINE อัตโนมัติ
         if (lineProfile && !user.lineUserId) {
           const updatedUser = { ...user, lineUserId: lineProfile.userId };
           onUpdateUser(updatedUser);
@@ -112,8 +108,8 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
         password: formData.password, 
         name: formData.name, 
         role: 'user', 
-        registerSource: lineProfile ? 'line' : 'web', // บันทึกแหล่งที่มา
-        lineUserId: lineProfile ? lineProfile.userId : undefined // บันทึก LINE ID ถ้ามี
+        registerSource: lineProfile ? 'line' : 'web', 
+        lineUserId: lineProfile ? lineProfile.userId : undefined 
       };
       onRegister(newUser);
       onLogin(newUser);
@@ -133,7 +129,6 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
           <p className="text-slate-500 mt-1">สพป.ชัยภูมิ เขต 2</p>
         </div>
 
-        {/* ถ้าโหลดมาเจอโปรไฟล์ LINE ให้แสดงรูปโปรไฟล์ */}
         {lineProfile && (
           <div className="bg-[#f0fcf4] border border-[#a2ecc2] p-4 rounded-xl mb-6 flex items-center gap-4">
             {lineProfile.pictureUrl ? (
@@ -164,8 +159,8 @@ const LoginRegisterView = ({ onLogin, usersDb, onRegister, onUpdateUser }: { onL
           <button onClick={() => { setIsLoginMode(!isLoginMode); setError(''); }} className="text-blue-600 font-bold hover:underline">{isLoginMode ? 'สมัครสมาชิก' : 'เข้าสู่ระบบเลย'}</button>
         </div>
 
-        {/* ปุ่ม Login ด้วย LINE (สำหรับคนที่เข้าผ่านเว็บปกติเบราว์เซอร์) */}
-        {!lineProfile && LIFF_ID && LIFF_ID !== "ใส่_LIFF_ID_ของคุณที่นี่" && (
+        {/* ✅ เอาการเปรียบเทียบที่ทำให้ Error ออก */}
+        {!lineProfile && LIFF_ID && (
           <button onClick={handleLineLogin} className="w-full mt-4 p-3 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-lg text-center font-bold transition shadow-md flex items-center justify-center gap-2">
             💬 เข้าสู่ระบบด้วย LINE
           </button>
